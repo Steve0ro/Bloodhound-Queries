@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Return All Azure Users that are part of the 'Global Administrator' Role",
+        "query": "MATCH p =(n)-[r:AZGlobalAdmin*1..]->(m) RETURN p LIMIT 100"
+    },
+    {
+        "name": "Return All On-Prem users with edges to Azure",
+        "query": "MATCH  p=(m:User)-[r:AZResetPassword|AZOwns|AZUserAccessAdministrator|AZContributor|AZAddMembers|AZGlobalAdmin|AZVMContributor|AZOwnsAZAvereContributor]->(n) WHERE m.objectid CONTAINS 'S-1-5-21' RETURN p LIMIT 100"
+    },
+    {
+        "name": "Find all paths to an Azure VM",
+        "query": "MATCH p = (n)-[r]->(g:AZVM) RETURN p LIMIT 100"
+    },
+    {
+        "name": "Find all paths to an Azure KeyVault",
+        "query": "MATCH p = (n)-[r]->(g:AZKeyVault) RETURN p LIMIT 100"
+    },
+    {
+        "name": "Return All Azure Users and their Groups (Warning: Heavy)",
+        "query": "MATCH p=(m:AZUser)-[r:AZMemberOf*1..]->(n) WHERE NOT m.objectid CONTAINS 'S-1-5' RETURN p LIMIT 100"
+    },
+    {
+        "name": "Return GUEST Azure Users and their Groups",
+        "query": "MATCH p=(m:AZUser)-[r:AZMemberOf*1..]->(n) WHERE NOT m.objectid CONTAINS 'S-1-5' AND m.userprincipalname=~ '(?i).*#EXT#.*' RETURN p LIMIT 100"
+    },
+    {
+        "name": "Return All Azure Users and their Admin Roles",
+        "query": "MATCH p=(n)-[:AZHasRole|AZMemberOf*1..]->(:AZRole) RETURN p LIMIT 100"
+    },
+    {
+        "name": "Return All Azure Users and their owned Devices (Warning: Heavy)",
+        "query": "MATCH p=(d:AZDevice)<-[r1:AZOwns]->(m:AZUser) RETURN p LIMIT 100"
+    },
+    {
+        "name": "Return All Azure Admins and their owned Devices",
+        "query": "MATCH p=(d:AZDevice)<-[r1:AZOwns]->(m:AZUser)<-[r2:AZHasRole]->(n) RETURN p LIMIT 100"
+    },
+    {
+        "name": "Return All Azure AD Groups that are synchronized with On-Premise AD",
+        "query": "MATCH (n:Group) WHERE n.objectid CONTAINS 'S-1-5' AND n.azsyncid IS NOT NULL RETURN n LIMIT 100"
+    },
+    {
+        "name": "Find all Privileged Service Principals",
+        "query": "MATCH p = (g:AZServicePrincipal)-[r]->(n) RETURN p LIMIT 100"
+    },
+    {
+        "name": "Find all Owners of Azure Applications",
+        "query": "MATCH p = (n)-[r:AZOwns]->(g:AZApp) RETURN p LIMIT 100"
+    }
+]
